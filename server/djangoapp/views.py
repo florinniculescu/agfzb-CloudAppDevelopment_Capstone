@@ -18,19 +18,17 @@ logger = logging.getLogger(__name__)
 
 
 # Create your views here.
-class AboutPageView(TemplateView):
-    template_name = 'about.html'
-
-class ContactPageView(TemplateView):
-    template_name = 'contact.html'
 
 # Create an `about` view to render a static about page
 # def about(request):
-# ...
-
+class AboutPageView(TemplateView):
+    template_name = 'about.html'
 
 # Create a `contact` view to return a static contact page
 #def contact(request):
+class ContactPageView(TemplateView):
+    template_name = 'contact.html'
+
 
 # Create a `login_request` view to handle sign in request
 # def login_request(request):

@@ -15,6 +15,8 @@ urlpatterns = [
     path(route='about/',view=AboutPageView.as_view(), name='about'),
     # path for contact us view
     path(route='contact/',view=ContactPageView.as_view(), name='contact'),
+    # path for home view
+    path(route='index/', view=views.get_dealerships, name='index'),
     # path for registration
 
     # path for login
