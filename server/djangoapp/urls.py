@@ -1,4 +1,6 @@
 from django.urls import path
+# add the static pages
+from .views import ContactPageView, AboutPageView
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
@@ -10,20 +12,17 @@ urlpatterns = [
     # name the URL
 
     # path for about view
-
+    path(route='about/',view=AboutPageView.as_view(), name='about'),
     # path for contact us view
-
+    path(route='contact/',view=ContactPageView.as_view(), name='contact'),
     # path for registration
 
     # path for login
-
+    path(route='dealerships/', view=views.get_dealership_list, name='dealerships'),
     # path for logout
 
     path(route='', view=views.get_dealerships, name='index'),
-    path(route='', view=views.get_dealership_list, name='dealerships'),
-    path(route='', view=views.get_about_us, name='about'),
-    path(route='', view=views.get_contact, name='contact')
-
+    
     # path for dealer reviews view
 
     # path for add a review view
