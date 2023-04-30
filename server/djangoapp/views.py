@@ -19,16 +19,23 @@ logger = logging.getLogger(__name__)
 
 # Create your views here.
 
+#commented as the example wants to use a function
+#class AboutPageView(TemplateView):
+#    template_name = 'about.html'
+#class ContactPageView(TemplateView):
+#    template_name = 'contact.html'
 # Create an `about` view to render a static about page
-# def about(request):
-class AboutPageView(TemplateView):
-    template_name = 'about.html'
+
+def about(request):
+    context = {}
+    if request.method == "GET":
+        return render(request, 'djangoapp/about.html', context)
 
 # Create a `contact` view to return a static contact page
-#def contact(request):
-class ContactPageView(TemplateView):
-    template_name = 'contact.html'
-
+def contact(request):
+    context = {}
+    if request.method == "GET":
+        return render(request, 'djangoapp/contact.html', context)
 
 # Create a `login_request` view to handle sign in request
 # def login_request(request):
@@ -52,16 +59,6 @@ def get_dealership_list(request):
     context = {}
     if request.method == 'GET':
         return render(request, 'djangoapp/dealerships.html', context)
-
-#def get_about_us(request):
-#    context = {}
-#    if request.method == 'GET':
-#        return render(request, 'djangoapp/about.html', context)
-
-#def get_contact(request):
-#    context = {}
-#    if request.method == 'GET':
-#        return render(request, 'djangoapp/contact.html', context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
