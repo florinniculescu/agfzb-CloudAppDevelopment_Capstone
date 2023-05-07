@@ -18,9 +18,8 @@ urlpatterns = [
     path(route='contact/',view=views.contact, name='contact'),
     # path for home view
     path(route='index/', view=views.get_dealerships, name='index'),
- 
     # path for registration
-    path(route='registration/', view=views.login_request, name='registration'),
+    path(route='registration/', view=views.registration_request, name='registration'),
     # path for login
     path(route='login/', view=views.login_request, name='login'),
     # path for logout
