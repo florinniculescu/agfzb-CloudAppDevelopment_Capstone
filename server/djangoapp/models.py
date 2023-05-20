@@ -31,11 +31,10 @@ class CarModel(models.Model):
     )
     Year = models.DateField(null=True)
     def __str__(self):
-        return "Car Make: " + self.Carmake + ", " + \
-                "Dealer_id: " + self.Dealer_id + ", " \
+        return "Dealer_id: " + str(self.Dealer_id) + ", " + \
                 "Name: " + str(self.Name) + ", " + \
                 "Type: " + self.Type + ", " + \
-                "Year: " + self.str(self.Year)
+                "Year: " + str(self.Year)
 # <HINT> Create a Car Model model `class CarModel(models.Model):`:
 # - Many-To-One relationship to Car Make model (One Car Make has many Car Models, using ForeignKey field)
 # - Name
