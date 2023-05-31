@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 # for static pages
 from django.views.generic import TemplateView
 # from .models import related models
-from .restapis import get_dealers_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -102,8 +102,15 @@ def get_dealership_list(request):
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    if request.method == "GET":
+        url = "https://eu-de.functions.appdomain.cloud/api/v1/web/3c122bad-f41e-4e17-bcbd-be4f913886e7/dealerships/get_reviews_per_dealership"
+        # Get reviewers from the URL
+        reviews = get_dealer_reviews_from_cf(url, dealer_id)
+        # Concat all reviewer's name
+        reviewer_names = ' '.join([reviewer.name for reviewer in reviews])
+        # Return a list of reviewers name
+        return HttpResponse(reviewer_names)
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
