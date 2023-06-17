@@ -7,16 +7,27 @@ from requests.auth import HTTPBasicAuth
 # Create a `get_request` to make HTTP GET requests
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
 #                                     auth=HTTPBasicAuth('apikey', api_key))
-def get_request(url, **kwargs):
+def get_request(url,api_key, **kwargs):
     print(kwargs)
     print("GET from {} ".format(url))
-    try:
-        # Call get method of requests library with URL and parameters
-        response = requests.get(url, headers={'Content-Type': 'application/json'},
+    if (api_key != 0):
+        try:
+            # Call get method of requests library with URL and parameters
+                print("authorization call stated ...")
+                response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs,
+                                         auth=HTTPBasicAuth('apikey', kwargs["api_key"]))
+        except:
+            # If any error occurs
+            print("Network exception occurred")
+    else:
+        try:
+            print("non-auth call initiated ...")
+            response = requests.get(url, headers={'Content-Type': 'application/json'},
                                     params=kwargs)
-    except:
-        # If any error occurs
-        print("Network exception occurred")
+        except:
+            # If any error occurs
+            print("Network exception occurred")
+
     status_code = response.status_code
     print("With status {} ".format(status_code))
     json_data = json.loads(response.text)
@@ -33,7 +44,7 @@ def get_request(url, **kwargs):
 def get_dealers_from_cf(url, **kwargs):
     results = []
     # Call get_request with a URL parameter
-    json_result = get_request(url)
+    json_result = get_request(url,0)
     if json_result:
         # Get the row list in JSON as dealers
         dealers = json_result["docs"]
@@ -55,7 +66,7 @@ def get_dealer_reviews_from_cf(url, dealer_id):
     results = []
     dealer_id = int(dealer_id)
     # Call get_request with a URL parameter
-    json_result = get_request(url,dealerId=dealer_id)
+    json_result = get_request(url,0,dealerId=dealer_id)
     if json_result:
         # Get the row list in JSON as dealers
         reviews = json_result["docs"]
@@ -76,8 +87,17 @@ def get_dealer_reviews_from_cf(url, dealer_id):
 
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
-# def analyze_review_sentiments(text):
+def analyze_review_sentiments(**kwargs):
 # - Call get_request() with specified arguments
+  url_watson = ""
+  api_key_watson = ""
+  params = dict()
+  params["text"] = kwargs["text"]
+  params["version"] = kwargs["version"]
+  params["features"] = kwargs["features"]
+  params["return_analyzed_text"] = kwargs["return_analyzed_text"]
+  response = requests.get(url_watson, params=params, headers={'Content-Type': 'application/json'},
+                                    auth=HTTPBasicAuth('apikey', api_key_watson))
 # - Get the returned sentiment label such as Positive or Negative
 
 
