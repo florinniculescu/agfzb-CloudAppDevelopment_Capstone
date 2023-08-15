@@ -4,13 +4,17 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # for static pages
 from django.views.generic import TemplateView
-# from .models import related models
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
+from .models import CarModel
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
+from django.urls import reverse
+from django.views import generic
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+from django.template import RequestContext
+import random
 
 
 # Get an instance of a logger
@@ -93,7 +97,9 @@ def get_dealerships(request):
         # Concat all dealer's short name
         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         # Return a list of dealer short name
-        return HttpResponse(dealer_names)
+        context = dict()
+        context["dealerships"] = dealerships
+        return render(request, 'djangoapp/index.html', context)
 
 def get_dealership_list(request):
     context = {}
@@ -108,11 +114,42 @@ def get_dealer_details(request, dealer_id):
         # Get reviewers from the URL
         reviews = get_dealer_reviews_from_cf(url, dealer_id)
         # Concat all reviewer's name
-        reviewer_names = ' '.join([reviewer.name for reviewer in reviews])
+        reviewer_names_sentiment = ' '.join([reviewer.name + reviewer.sentiment for reviewer in reviews])
+        context = dict()
+        context["reviews"] = reviews
+        context["dealership"] = dealer_id
+        return render(request, 'djangoapp/dealer_details.html', context)
         # Return a list of reviewers name
-        return HttpResponse(reviewer_names)
+        # return HttpResponse(reviewer_names_sentiment)
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+    # check if user is authentificated is already done in the called from page
+    if request.method == "GET":
+        context = dict()
+        context["dealer_id"] = dealer_id
+        # load cars from admin data
+        cars = CarModel.objects.filter(Dealer_id = dealer_id)
+        context["cars"] = cars
+        return render(request, 'djangoapp/add_review.html', context)
+    if request.method == "POST":
+        print(request)
+        url = "https://eu-de.functions.appdomain.cloud/api/v1/web/3c122bad-f41e-4e17-bcbd-be4f913886e7/dealerships/add_review_for_dealership"
+        review = dict()
+        review["id"] = random.randint(1,500)
+        review["name"] = request.user.first_name
+        review["dealership"] = dealer_id
+        review["review"] = request.POST["content"]
+        review["purchase"] = request.POST["purchased"]
+        review["purchase_date"] = request.POST["purchasedate"]
+        # car_id will not be passed
+        car_id = str()
+        car_id,review["car_make"],review["car_model"],review["car_year"] = request.POST.get('car',None).split('-')
+        #review["time"] = datetime.utcnow().isoformat()
+        json_payload = dict()
+        json_payload["doc"] = review
+        json_payload["overwrite"] = True
+        post_response = post_request(url, json_payload)
+        print(post_response)
+        return HttpResponseRedirect(reverse(viewname='djangoapp:dealer_details', args=(dealer_id,)))
 
